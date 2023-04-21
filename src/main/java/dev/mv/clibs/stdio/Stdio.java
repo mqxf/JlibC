@@ -24,7 +24,7 @@ public class Stdio {
                 }
             }
             else {
-                args[i] = Utils.<Class<? extends CType>, Object>matchReturn((Class<? extends CType>) args[i].getClass())
+                args[i] = Utils.<Class, Object>matchReturn(args[i].getClass())
                     .occasion(Char.class, ((Char) args[i]).get())
                     .occasion(Bool.class, ((Bool) args[i]).get())
                     .occasion(I8.class, ((I8) args[i]).get())
@@ -33,7 +33,7 @@ public class Stdio {
                     .occasion(I64.class, ((I64) args[i]).get())
                     .occasion(F32.class, ((F32) args[i]).get())
                     .occasion(F64.class, ((F64) args[i]).get())
-                    .noOccasion(args[i])
+                    .__(args[i])
                     .value();
             }
             i++;
