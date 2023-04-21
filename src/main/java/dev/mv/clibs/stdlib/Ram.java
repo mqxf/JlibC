@@ -91,9 +91,11 @@ public class Ram {
         checkVirtualAddress(address);
         int a = unmap(address);
         checkAddress(a);
-        int s = size[a];
-        if (s == 0) throw new SIGSEGV();
-        Arrays.fill(size, a, a + s, 0);
+        while (size[a] < 0) {
+            a--;
+        }
+        if (size[a] == 0) throw new SIGSEGV();
+        Arrays.fill(size, a, a + size[a], 0);
     }
 
     public static long increment(long address, int n) {

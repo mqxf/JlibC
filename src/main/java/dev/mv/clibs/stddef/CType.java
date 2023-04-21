@@ -9,5 +9,4 @@ public interface CType {
     default Pointer<CType> pointer() {
         return Pointer.wrap(this);
     }
-
 }

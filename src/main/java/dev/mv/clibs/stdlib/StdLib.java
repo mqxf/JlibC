@@ -31,10 +31,6 @@ public class StdLib {
         return new Pointer<>(addr, ptr);
     }
 
-    public static <T extends CType> Pointer<T> malloc(Class<T> clazz, int size) {
-        return null;
-    }
-
     public static <T extends CType> Pointer<T> calloc(int n, int size) {
         long addr = Ram.malloc(Pointer.sizeof());
         I64 ptr = I64.deref(addr);
@@ -47,8 +43,22 @@ public class StdLib {
         return new Pointer<>(addr, ptr);
     }
 
-    public static <T extends CType> Pointer<T> calloc(Class<T> clazz, int n, int size) {
-        return null;
+    public static <T extends CType> Pointer<T> realloc(Pointer<T> ptr, int size) {
+        I64 element = I64.deref(ptr.deref());
+        element.set(Ram.realloc(element.get(), size));
+        return ptr;
+    }
+
+    public static <T extends CType> Pointer<T> realloc(Pointer<T> ptr, int n, int size) {
+        long arr = ptr.deref();
+        for (int i = 0; i < size; i++) {
+            I64 element = I64.deref(Ram.increment(arr, i * I64.sizeof()));
+            element.set(Ram.realloc(element.get(), size));
+        }
+        I64 addr = I64.deref(ptr.addr());
+        arr = Ram.realloc(addr.get(), n * I64.sizeof());
+        ptr.set(arr);
+        return ptr;
     }
 
     public static <T extends CType> Pointer<T> mallocPointer() {
@@ -65,6 +75,29 @@ public class StdLib {
         long arr = Ram.calloc(n, I64.sizeof());
         ptr.set(arr);
         return new Pointer<>(addr, ptr);
+    }
+
+    public static <T extends CType> Pointer<T> reallocPointer(Pointer<T> ptr, int n) {
+        I64 addr = I64.deref(ptr.addr());
+        long arr = Ram.realloc(addr.get(), n * I64.sizeof());
+        ptr.set(arr);
+        return ptr;
+    }
+
+    public static <T extends CType> void free(Pointer<T> ptr) {
+        long addr = ptr.deref();
+        Ram.free(addr);
+        Ram.free(ptr.addr());
+    }
+
+    public static void free(CType type) {
+        Ram.free(type.addr());
+    }
+
+    public static <T extends CType> void memcpy(Pointer<T> src, Pointer<T> dst, int n) {
+        for (int i = 0; i < n; i++) {
+            dst.set(i, src.deref(i));
+        }
     }
 
     public static Pointer<Char> toPointer(String s) {

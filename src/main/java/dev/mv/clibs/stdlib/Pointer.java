@@ -38,6 +38,13 @@ public class Pointer<T extends CType> implements CType {
         decrement(index);
     }
 
+    void set(int index, long value) {
+        increment(index);
+        I64 val = I64.deref(ptr.get());
+        val.set(value);
+        decrement(index);
+    }
+
     public void set(T[] values) {
         for (T value : values) {
             set(value);
