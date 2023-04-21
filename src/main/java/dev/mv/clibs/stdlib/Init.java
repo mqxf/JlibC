@@ -16,15 +16,13 @@ public class Init {
             Pointer<Pointer<Char>> argv = callocPointer(args.length);
             for (int i = 0; i < args.length; i++) {
                 argv.set(i, toPointer(args[i]));
-                //argv.set(i, calloc(args[i].length(), Char.sizeof()));
-                //Pointer.of(argv.deref(i)).set(toPointer(args[i]));
             }
             int res = Main.main(argc, argv);
             System.exit(res);
         } catch (SIGSEGV s) {
             System.err.println("Segmentation fault (core dumped)");
             System.exit(11);
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
 
         }
     }
